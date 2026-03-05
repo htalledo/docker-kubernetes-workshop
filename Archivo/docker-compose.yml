@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-api
+  template:
+    metadata:
+      labels:
+        app: log-api
+    spec:
+      containers:
+        - name: log-api
+          image: baliagac/log-api:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: storage-volume
+              mountPath: /tmp/data/log
+      volumes:
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: hello-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: log-api
+spec:
+  selector:
+    app: log-api
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 8080
+      name: http
+  type: LoadBalancer

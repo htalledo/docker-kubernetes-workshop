@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haroldstm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: haroldstm
+  template:
+    metadata:
+      labels:
+        app: haroldstm
+    spec:
+      containers:
+        - name: haroldstm
+          image: haroldstm/hstm-log:latest
+ #         resources:
+  #          requests:
+   #           memory: "128Mi"
+    #          cpu: "100m"
+     #       limits:
+      #        memory: "256Mi"
+       #       cpu: "500m"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: storage-volume
+              mountPath: /tmp/data/log
+      volumes:
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: hello-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haroldstm
+spec:
+  selector:
+    app: haroldstm
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      name: http
+  type: LoadBalancer
