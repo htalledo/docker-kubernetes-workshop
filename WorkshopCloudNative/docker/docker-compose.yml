@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  nginx:
+    build: .
+    container_name: mi-nginx
+    ports:
+      - "8087:80"
+    restart: always
